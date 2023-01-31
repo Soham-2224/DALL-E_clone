@@ -138,7 +138,9 @@ const CreatePost = () => {
                         type="button"
                         onClick={generateImage}
                         disabled={generatingImg}
-                        className="text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                        className={`${
+                            generatingImg ? "cursor-not-allowed" : "cursor-pointer"
+                        } text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center`}
                     >
                         {generatingImg ? "Generating..." : "Generate"}
                     </button>
@@ -149,8 +151,11 @@ const CreatePost = () => {
                         Once you have created the image you want, you can share it with others in the community{" "}
                     </p>
                     <button
-                        className="mt-3 text-white bg-[#6469ff] font-medium px-5 py-2.5 rounded-lg text-sm w-full sm:w-auto text-center"
+                        className={`${
+                            loading ? "cursor-not-allowed" : "cursor-pointer"
+                        } mt-3 text-white bg-[#6469ff] font-medium px-5 py-2.5 rounded-lg text-sm w-full sm:w-auto text-center`}
                         type="submit"
+                        disabled={loading}
                     >
                         {loading ? "Sharing..." : "Share with the community"}
                     </button>
