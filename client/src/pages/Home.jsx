@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import { Card, Loader, FormField } from "../components";
 
@@ -22,32 +22,43 @@ const Home = () => {
     const [searchedResults, setSearchedResults] = useState(null);
     const [searchTimeout, setSearchTimeout] = useState(null);
 
-    useEffect(() => {
-        const fetchPosts = async () => {
-            setLoading(true);
+    const fetchPosts = useCallback(async (controller) => {
+        setLoading(true);
 
-            try {
-                const response = await fetch("https://dall-e-srt3.onrender.com/api/v1/post", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
+        try {
+            const response = await fetch("https://dall-e-srt3.onrender.com/api/v1/post", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                signal: controller.signal,
+            });
 
-                if (response.ok) {
-                    const result = await response.json();
+            if (response.ok) {
+                const result = await response.json();
 
-                    setAllPosts(result.data.reverse());
-                }
-            } catch (error) {
-                alert(error);
+                setAllPosts(result.data.reverse());
+            }
+        } catch (error) {
+            if (error.name === "AbortError") {
+                console.log("request aborted");
+            } else {
                 console.log(error);
-            } finally {
+            }
+        } finally {
+            if (!controller.signal.aborted) {
                 setLoading(false);
             }
-        };
-        fetchPosts();
+        }
     }, []);
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        fetchPosts(controller);
+
+        return () => controller.abort();
+    }, [fetchPosts]);
 
     const handleSearchChange = (e) => {
         clearTimeout(searchTimeout);
