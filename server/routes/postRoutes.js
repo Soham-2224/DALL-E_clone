@@ -31,10 +31,12 @@ router.route("/").post(async (req, res) => {
         const { name, prompt, photo } = req.body;
         const photoUrl = await cloudinary.uploader.upload(photo);
 
+        const url = photoUrl.url.substring(0, 4) + "s" + photoUrl.url.substring(4, photoUrl.url.length);
+
         const newPost = await Post.create({
             name,
             prompt,
-            photo: photoUrl.url,
+            photo: url,
         });
 
         res.status(201).json({ success: true, data: newPost });
