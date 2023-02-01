@@ -11,5 +11,7 @@ export function getRandomPrompt(prompt) {
 }
 
 export async function downloadImage(_id, photo) {
-    FileSaver.saveAs(photo, `download-${_id}.jpg`);
+    const url = photo.includes("https") ? photo : photo.replace("http", "https");
+
+    FileSaver.saveAs(url, `download-${_id}.jpg`);
 }
